@@ -1,0 +1,184 @@
+Sure, here's the complete code converted to a React.js application along with explanations and comments:
+
+First, let's create a new React component called `CRUDApp`:
+
+```jsx
+import React, { useState } from 'react';
+import './style.css';
+
+const CRUDApp = () => {
+  // State to manage form data
+  const [formData, setFormData] = useState({
+    productcode: '',
+    productname: '',
+    qty: '',
+    perPrice: ''
+  });
+
+  // State to manage selected row for editing
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  // State to manage store list
+  const [storeList, setStoreList] = useState([]);
+
+  // State to manage total bill
+  const [totalBill, setTotalBill] = useState(0);
+
+  // Function to handle form submission
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    if (selectedRow === null) {
+      // Insert new product
+      setStoreList([...storeList, formData]);
+    } else {
+      // Update existing product
+      const updatedStoreList = [...storeList];
+      updatedStoreList[selectedRow] = formData;
+      setStoreList(updatedStoreList);
+      setSelectedRow(null);
+    }
+    calculateTotalBill();
+    resetForm();
+  };
+
+  // Function to handle form input change
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  // Function to handle edit button click
+  const onEdit = (index) => {
+    setSelectedRow(index);
+    setFormData(storeList[index]);
+  };
+
+  // Function to handle delete button click
+  const onDelete = (index) => {
+    if (window.confirm('Are you sure to delete this record?')) {
+      const updatedStoreList = [...storeList];
+      updatedStoreList.splice(index, 1);
+      setStoreList(updatedStoreList);
+      calculateTotalBill();
+      resetForm();
+    }
+  };
+
+  // Function to calculate total bill
+  const calculateTotalBill = () => {
+    let total = 0;
+    storeList.forEach((item) => {
+      total += parseFloat(item.perPrice);
+    });
+    setTotalBill(total);
+  };
+
+  // Function to reset form
+  const resetForm = () => {
+    setFormData({
+      productcode: '',
+      productname: '',
+      qty: '',
+      perPrice: ''
+    });
+  };
+
+  return (
+    <div>
+      <div className="formV">
+        <form onSubmit={onFormSubmit}>
+          <div>
+            <label htmlFor="productcode">Product code</label>
+            <input
+              type="text"
+              name="productcode"
+              id="productcode"
+              value={formData.productcode}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="productname">Product Name</label>
+            <input
+              type="text"
+              name="productname"
+              id="productname"
+              value={formData.productname}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="qty">Quantity</label>
+            <input
+              type="number"
+              name="qty"
+              id="qty"
+              value={formData.qty}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="perPrice">Price</label>
+            <input
+              type="number"
+              name="perPrice"
+              id="perPrice"
+              value={formData.perPrice}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          <div className="form_action--button">
+            <input type="submit" value={selectedRow !== null ? 'Update' : 'Submit'} />
+            <input type="reset" value="Reset" onClick={resetForm} />
+          </div>
+        </form>
+      </div>
+
+      <table className="list">
+        <thead>
+          <tr>
+            <th>Product code</th>
+            <th>Product name</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {storeList.map((item, index) => (
+            <tr key={index}>
+              <td>{item.productcode}</td>
+              <td>{item.productname}</td>
+              <td>{item.qty}</td>
+              <td>${item.perPrice}</td>
+              <td>
+                <button onClick={() => onEdit(index)}>Edit</button>
+                <button onClick={() => onDelete(index)}>Delete</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div>Total Bill: <span>${totalBill.toFixed(2)}</span></div>
+    </div>
+  );
+};
+
+export default CRUDApp;
+```
+
+In this code:
+
+- We use React state to manage form data (`formData`), selected row index (`selectedRow`), store list (`storeList`), and total bill (`totalBill`).
+- Functions are defined to handle form submission, form input change, edit button click, delete button click, calculate total bill, and reset form.
+- JSX markup is used to render the form, store list table, and total bill.
+- Event handlers are added to form inputs and buttons to manage user interactions.
+
+Ensure you have the corresponding CSS file (`style.css`) with styles matching your original HTML/CSS. Additionally, you may need to refactor any external JavaScript logic (`index.js` in your case) to fit the React component's lifecycle or functionality.
